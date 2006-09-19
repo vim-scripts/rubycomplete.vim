@@ -1,0 +1,17 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1662
+
+rubycomplete is an omni-completion script for ruby. 
+It supports the following:
+  * dynamic completion of in-buffer entities (classes, methods, objects, modules).
+  * rails 
+          - inclusion of column-names/fields
+          - helpers included in completions
+  * automatic inclusion of required modules
+  * automatic handling of syntax errors
+
+Rubycomplete requires ruby support to work. It uses ruby to process the buffer and introspection to create a list of completions. 
+It is distributed with vim, and as part of the vim-ruby project (http://vim-ruby.rubyforge.org/).
+CVS versions are availible from vim-ruby, major releases will be published here and on my site.
+
+For more info go to: http://blog.hasno.info/blog/segfault/dev/2006/04/10/vim-7-ruby-omni-completion.html
+
