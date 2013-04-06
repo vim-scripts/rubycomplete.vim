@@ -250,8 +250,7 @@ class VimRubyCompletion
   end
 
   def get_buffer_entity(name, vimfun)
-    loading_allowed = VIM::evaluate("exists('g:rubycomplete_buffer_loading') && g:rubycomplete_buffer_loading")
-    return nil if loading_allowed != '1'
+    return nil unless loading_allowed?
     return nil if /(\"|\')+/.match( name )
     buf = VIM::Buffer.current
     nums = eval( VIM::evaluate( vimfun % name ) )
@@ -289,9 +288,7 @@ class VimRubyCompletion
 
   def get_buffer_entity_list( type )
     # this will be a little expensive.
-    loading_allowed = VIM::evaluate("exists('g:rubycomplete_buffer_loading') && g:rubycomplete_buffer_loading")
-    allow_aggressive_load = VIM::evaluate("exists('g:rubycomplete_classes_in_global') && g:rubycomplete_classes_in_global")
-    return [] if allow_aggressive_load != '1' || loading_allowed != '1'
+    return [] unless allow_aggresive_load? || loading_allowed?
 
     buf = VIM::Buffer.current
     eob = buf.length
@@ -323,8 +320,7 @@ class VimRubyCompletion
 
 
   def load_rails
-    allow_rails = VIM::evaluate("exists('g:rubycomplete_rails') && g:rubycomplete_rails")
-    return if allow_rails != '1'
+    return unless allow_rails?
 
     buf_path = VIM::evaluate('expand("%:p")')
     file_name = VIM::evaluate('expand("%:t")')
@@ -381,9 +377,7 @@ class VimRubyCompletion
   end
 
   def get_rails_helpers
-    allow_rails = VIM::evaluate("exists('g:rubycomplete_rails') && g:rubycomplete_rails")
-    rails_loaded = VIM::evaluate('s:rubycomplete_rails_loaded')
-    return [] if allow_rails != '1' || rails_loaded != '1'
+    return [] unless allow_rails? || rails_loaded?
 
     buf_path = VIM::evaluate('expand("%:p")')
     buf_path.gsub!( /\\/, "/" )
@@ -412,9 +406,7 @@ class VimRubyCompletion
   end
 
   def add_rails_columns( cls )
-    allow_rails = VIM::evaluate("exists('g:rubycomplete_rails') && g:rubycomplete_rails")
-    rails_loaded = VIM::evaluate('s:rubycomplete_rails_loaded')
-    return [] if allow_rails != '1' || rails_loaded != '1'
+    return [] unless allow_rails? || rails_loaded?
     begin
         eval( "#{cls}.establish_connection" )
         return [] unless eval( "#{cls}.ancestors.include?(ActiveRecord::Base).to_s" )
@@ -433,9 +425,7 @@ class VimRubyCompletion
   end
 
   def get_rails_view_methods
-    allow_rails = VIM::evaluate("exists('g:rubycomplete_rails') && g:rubycomplete_rails")
-    rails_loaded = VIM::evaluate('s:rubycomplete_rails_loaded')
-    return [] if allow_rails != '1' || rails_loaded != '1'
+    return [] unless allow_rails? || rails_loaded?
 
     buf_path = VIM::evaluate('expand("%:p")')
     buf_path.gsub!( /\\/, "/" )
@@ -460,8 +450,7 @@ class VimRubyCompletion
   end
 
   def get_completions(base)
-    loading_allowed = VIM::evaluate("exists('g:rubycomplete_buffer_loading') && g:rubycomplete_buffer_loading")
-    if loading_allowed == '1'
+    if loading_allowed?
       load_requires
       load_rails
     end
@@ -641,6 +630,22 @@ class VimRubyCompletion
       outp = ""
     end
   end
+  private
+    def loading_allowed?
+      VIM::evaluate("exists('g:rubycomplete_buffer_loading') && g:rubycomplete_buffer_loading").to_s == '1'
+    end
+
+    def allow_aggresive_load?
+      VIM::evaluate("exists('g:rubycomplete_classes_in_global') && g:rubycomplete_classes_in_global").to_s == '1'
+    end
+
+    def allow_rails?
+      VIM::evaluate("exists('g:rubycomplete_rails') && g:rubycomplete_rails").to_s == 1
+    end
+
+    def rails_loaded?
+      VIM::evaluate('s:rubycomplete_rails_loaded').to_s == '1'
+    end
 
 end # VimRubyCompletion
 # }}} ruby completion
