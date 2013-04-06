@@ -640,7 +640,7 @@ class VimRubyCompletion
     end
 
     def allow_rails?
-      VIM::evaluate("exists('g:rubycomplete_rails') && g:rubycomplete_rails").to_s == 1
+      VIM::evaluate("exists('g:rubycomplete_rails') && g:rubycomplete_rails").to_s == '1'
     end
 
     def rails_loaded?
